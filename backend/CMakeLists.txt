@@ -14,5 +14,7 @@ include_directories(
     third_party/sqlite/
 )
 
+add_subdirectory(third_party/sqlite)
 add_subdirectory(third_party/wolfssl)
+
 add_subdirectory(src)
