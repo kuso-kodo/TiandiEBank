@@ -8,7 +8,7 @@ namespace db {
     void init_storage() {
         storage_mutex.lock();
         storage.sync_schema(true);
-        entity::BankAccount account {-1, false, "", "", "", "", 0};
+        entity::BankAccount account {-1, false, "1145141919810", "", "", "", 0};
         storage.insert(account);
         storage_mutex.unlock();
     }

@@ -38,6 +38,7 @@ add_library(wolfssl STATIC
             ${wolfssl_DIR}/wolfcrypt/src/idea.c
             ${wolfssl_DIR}/wolfcrypt/src/integer.c
             ${wolfssl_DIR}/wolfcrypt/src/logging.c
+            ${wolfssl_DIR}/wolfcrypt/src/kdf.c
             ${wolfssl_DIR}/wolfcrypt/src/md2.c
             ${wolfssl_DIR}/wolfcrypt/src/md4.c
             ${wolfssl_DIR}/wolfcrypt/src/md5.c
