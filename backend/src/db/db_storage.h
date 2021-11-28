@@ -5,7 +5,7 @@
 
 namespace db
 {
-    auto storage_schema()
+    inline auto storage_schema()
     {
         auto account_table = sqlite_orm::make_table("account",
                                                     sqlite_orm::make_column("id", &entity::BankAccount::id, sqlite_orm::autoincrement(), sqlite_orm::primary_key()),
