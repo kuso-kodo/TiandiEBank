@@ -26,11 +26,11 @@ namespace service
             }
 
             auto token = jwt::create()
-                .set_issuer("tiandi")
-                .set_issued_at(std::chrono::system_clock::now())
-                .set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{3600})
-                .set_payload_claim("id", picojson::value(int64_t{id}))
-                .sign(jwt::algorithm::hs256{account.password});
+                             .set_issuer("tiandi")
+                             .set_issued_at(std::chrono::system_clock::now())
+                             .set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{3600})
+                             .set_payload_claim("id", picojson::value(int64_t{id}))
+                             .sign(jwt::algorithm::hs256{account.password});
             return token;
         }
 
@@ -39,12 +39,37 @@ namespace service
             return db::account::get_account(id);
         }
 
-        void update_account_info(int id, const std::optional<std::string> &first_name, const std::optional<std::string> &last_name, const std::optional<std::string> &phone, const std::optional<std::string> &password)
+        std::optional<int> extract_id(const std::string &token)
+        {
+            try
+            {
+                auto decoded = jwt::decode(token);
+                auto id = decoded.get_payload_claims()["id"].as_int();
+                auto account_opt = db::account::get_account(id);
+                if (!account_opt.has_value())
+                {
+                    return std::nullopt;
+                }
+                auto account = account_opt.value();
+
+                auto verifier = jwt::verify()
+                                    .allow_algorithm(jwt::algorithm::hs256{account.password})
+                                    .with_issuer("tiandi");
+                verifier.verify(decoded);
+                return id;
+            }
+            catch (std::exception &e)
+            {
+                return std::nullopt;
+            }
+        }
+
+        std::optional<std::string> update_account_info(int id, const std::optional<std::string> &first_name, const std::optional<std::string> &last_name, const std::optional<std::string> &phone, const std::optional<std::string> &password)
         {
             auto account_opt = db::account::get_account(id);
             if (!account_opt.has_value())
             {
-                return;
+                return std::nullopt;
             }
             auto account = account_opt.value();
             if (first_name.has_value())
@@ -64,6 +89,17 @@ namespace service
                 account.password = password.value();
             }
             db::account::update_account(account);
+            if (password.has_value())
+            {
+                auto token = jwt::create()
+                                 .set_issuer("tiandi")
+                                 .set_issued_at(std::chrono::system_clock::now())
+                                 .set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{3600})
+                                 .set_payload_claim("id", picojson::value(int64_t{id}))
+                                 .sign(jwt::algorithm::hs256{account.password});
+                return token;
+            }
+            return std::nullopt;
         }
 
         void delete_account(int id)
