@@ -20,7 +20,7 @@ namespace service
                 return std::nullopt;
             }
             auto account = account_opt.value();
-            if (account.password != password)
+            if (account.password != password || account.deleted)
             {
                 return std::nullopt;
             }
