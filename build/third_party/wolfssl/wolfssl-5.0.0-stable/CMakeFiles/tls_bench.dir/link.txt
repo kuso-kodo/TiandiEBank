@@ -1,1 +1,0 @@
-/usr/bin/clang -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/tls_bench.dir/examples/benchmark/tls_bench.c.o -o ../../../../third_party/wolfssl/wolfssl-5.0.0-stable/examples/benchmark/tls_bench  libwolfssl.a -lm 
