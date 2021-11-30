@@ -72,7 +72,7 @@ void update_account_info() {
     params.emplace("last_name", last_name);
     params.emplace("phone", phone);
     params.emplace("password", password);
-    auto res = client.Post("/account/info", params);
+    auto res = client.Post("/account/update", params);
     if (res->status == 200) {
         std::cout << "Successfully updated account info.\n";
         if (password != "") {
@@ -81,6 +81,7 @@ void update_account_info() {
         }
     } else {
         std::cout << "Failed to update account info.\n";
+        std::cout << res->body << std::endl;
     }
 }
 
@@ -103,50 +104,51 @@ void delete_account() {
 
 void deposit() {
     std::cout << "Please enter the amount to deposit: ";
-    double amount;
+    unsigned int amount;
     std::cin >> amount;
-    httplib::Params params;
-    params.emplace("amount", std::to_string(amount));
-    auto res = client.Post("/transaction/deposit", params);
+    auto res = client.Post("/transaction/deposit", "{\"amount\":" + std::to_string(amount) + "}", "application/json");
     if (res->status == 200) {
         std::cout << "Successfully deposited " << amount << ".\n";
         std::cout << "New balance: " << res->body << std::endl;
     } else {
         std::cout << "Failed to deposit " << amount << ".\n";
+        std::cout << res->body << std::endl;
     }
 }
 
 void withdraw() {
     std::cout << "Please enter the amount to withdraw: ";
-    double amount;
+    unsigned int amount;
     std::cin >> amount;
     httplib::Params params;
-    params.emplace("amount", std::to_string(amount));
-    auto res = client.Post("/transaction/withdraw", params);
+    auto res = client.Post("/transaction/withdraw", "{\"amount\":" + std::to_string(amount) + "}", "application/json");
     if (res->status == 200) {
         std::cout << "Successfully withdrew " << amount << ".\n";
         std::cout << "New balance: " << res->body << std::endl;
     } else {
         std::cout << "Failed to withdraw " << amount << ".\n";
+        std::cout << res->body << std::endl;
     }
 }
 
 void transfer() {
     std::cout << "Please enter the amount to transfer: ";
-    double amount;
+    unsigned int amount;
     std::cin >> amount;
     std::cout << "Please enter the receiver's account id: ";
     int receiver_id;
     std::cin >> receiver_id;
+    std::cout << "Please enter the description: ";
+    std::string description;
+    std::cin >> description;
     httplib::Params params;
-    params.emplace("amount", std::to_string(amount));
-    params.emplace("receiver_id", std::to_string(receiver_id));
-    auto res = client.Post("/transaction/transfer", params);
+    auto res = client.Post("/transaction/transfer", "{\"amount\":" + std::to_string(amount) + ",\"to_id\":" + std::to_string(receiver_id) + ",\"description\":\"" + description + "\"}", "application/json");
     if (res->status == 200) {
         std::cout << "Successfully transferred " << amount << ".\n";
         std::cout << "New balance: " << res->body << std::endl;
     } else {
         std::cout << "Failed to transfer " << amount << ".\n";
+        std::cout << res->body << std::endl;
     }
 }
 
